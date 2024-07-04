@@ -19,7 +19,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "versionCode": 21,
+      "package": "com.nigelomondi.shamirijournal"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +33,21 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "37532a54-5dea-47b6-96ec-167e09475d1d"
+      }
+    },
+    "owner": "nigelomondi",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/37532a54-5dea-47b6-96ec-167e09475d1d"
     }
   }
 }
