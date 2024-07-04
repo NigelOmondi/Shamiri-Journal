@@ -52,12 +52,12 @@ const OnBoarding = ( navigation: any) => {
                     Document Your Journey</Text>
 
             <Text style={{
-                    fontSize: 24,
+                    fontSize: 23,
                     color: COLORS.black,
                     fontWeight: '800',
                     letterSpacing: 1
                 }}>
-                    Boost Your Productivity</Text>
+                    Via Effortless Journaling</Text>
             </View>
 
             <View style={{
@@ -69,11 +69,11 @@ const OnBoarding = ( navigation: any) => {
                 <Text style={{
                     color: COLORS.black
                 }}>
-                    Effortless Journaling and Seamless
+                    It is Quite Easy, Smart and Seamless
                 </Text>
                 <Text style={{
                     color: COLORS.black
-                }}>Organization for Productivity Enthusiasts</Text>
+                }}>For Productivity Enthusiasts</Text>
             </View>
 
             <View style={{
