@@ -2,10 +2,12 @@ import { StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'reac
 import React from 'react';
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
 
 
 
-const OnBoarding = ( navigation: any) => {
+const OnBoarding = () => {
+    const navigation: any = useNavigation();
   return (
     <View>
         <StatusBar barStyle="dark-content" backgroundColor={COLORS.bgLineGradOne}/>
@@ -57,7 +59,7 @@ const OnBoarding = ( navigation: any) => {
                     fontWeight: '800',
                     letterSpacing: 1
                 }}>
-                    Via Effortless Journaling</Text>
+                    with Smart Journal</Text>
             </View>
 
             <View style={{
@@ -69,7 +71,7 @@ const OnBoarding = ( navigation: any) => {
                 <Text style={{
                     color: COLORS.black
                 }}>
-                    It is Quite Easy, Smart and Seamless
+                    It is Easy, Smart and Seamless
                 </Text>
                 <Text style={{
                     color: COLORS.black
