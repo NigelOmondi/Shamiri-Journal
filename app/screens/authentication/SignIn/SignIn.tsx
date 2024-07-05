@@ -84,17 +84,9 @@ const SignIn = () => {
             .catch(error => {
                 console.log(error);
                 if (error.code === 'auth/invalid-credential') {
-                    if ( (email !== null) && (email === user?.email)) {
-                        
-                    } else if ( password !== null ) {
-            
-                        ToastAndroid.show("Sorry, wrong password.", ToastAndroid.LONG)
-                    }
-                       
-                    
-                    
-                   
-                   
+                    ToastAndroid.show("Invalid Credentials.", ToastAndroid.LONG);
+                 
+                    setErrors({password: "Invalid Credentials"})
                 }
             });
     };
