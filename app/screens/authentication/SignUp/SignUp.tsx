@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Fontisto } from '@expo/vector-icons';
-
+import { Entypo } from '@expo/vector-icons';
 
 
 const SignUp = () => {
@@ -15,6 +15,58 @@ const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] =  useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showErrors, setShowErrors] = useState(false);
+    const [errors, setErrors] = useState<any>({});
+    const [hidePassword, setHidePassword] = useState(true);
+    const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
+
+    const getErrors = (email: string, password: string, confirmPassword: string) => {
+
+        const errors: any = {}
+
+        if (!email)
+        {
+            errors.email = "Please Enter Email"
+        } else if ((!email.includes("@")) || (!email.includes(".com")))
+        {
+            errors.email = "Please enter a valid email"
+        }
+
+        if (!password) {
+            errors.password = "Enter Password"
+        } else if (password.length < 8) {
+            errors.password = "Password too short (8 characters minimum)"
+        }
+
+        if (!confirmPassword) {
+            errors.confirmPassword = "Confirm Password";
+        } else if (confirmPassword.length < 8) {
+            errors.confirmPassword = "Password too short (8 characters minimum)";
+        } else if ((confirmPassword !== password)) {
+            errors.confirmPassword = "Your passwords do not match"
+        }
+
+
+        return errors;
+
+    }
+
+    const handleRegister = () => {
+        const errors = getErrors(email, password, confirmPassword)
+
+        if(Object.keys(errors).length > 0) {
+            setShowErrors(true)
+            setErrors(showErrors && errors)
+            console.log(errors);
+            
+        } else {
+            setErrors({});
+            setShowErrors(false);
+            console.log("Registered!");
+        }
+      
+        
+    }
 
     const LoginWithIcon = ({iconName, onPress, buttonTitle}: any) => {
         return (
@@ -72,9 +124,11 @@ const SignUp = () => {
                    <Ionicons name="arrow-back-outline" size={24} color="black" />
                 </TouchableOpacity>
 
-                <ScrollView style={{
-                    paddingTop: 60
-                }}>
+                <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    style={{
+                       paddingTop: 60
+                    }}>
                     <Text style={{
                         textAlign: 'center',
                         marginVertical: 20,
@@ -107,19 +161,36 @@ const SignUp = () => {
                                     color: COLORS.black,
                                     borderRadius: 10,
                                     backgroundColor: COLORS.white }}
-                                />
+                            />
+                            {errors.email && <Text style={{
+                                fontSize: 14,
+                                color: COLORS.warning,
+                                marginTop: 4,
+                                marginStart: 4
+                            }}>{errors.email}</Text>}
+                         
                         </View>
 
                         <View style={{
                             width: '100%',
                             marginBottom: 20
                         }}>
-                            <TextInput 
+                            <View style={{
+                            width: '100%',
+                            borderRadius: 10,
+                            backgroundColor: COLORS.white,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                          }}>
+
+                        <TextInput 
                                 value={password}
                                 onChangeText={text => setPassword(text)}
                                 placeholder='Password'
                                 placeholderTextColor={COLORS.lightText}
-                                keyboardType='visible-password'
+                                secureTextEntry={hidePassword ? true : false}
+                                maxLength={40}
                                 style={{
                                     paddingVertical: 10,
                                     paddingHorizontal: 20,
@@ -127,19 +198,47 @@ const SignUp = () => {
                                     color: COLORS.black,
                                     borderRadius: 10,
                                     backgroundColor: COLORS.white }}
-                                />
+                            />
+                            {password.length > 0 && 
+                              <TouchableOpacity 
+                                onPress={() => setHidePassword(!hidePassword)}
+                                activeOpacity={0.9}
+                                style={{
+                                paddingRight: 20
+                              }}>
+                                <Entypo name={hidePassword ? "eye" : "eye-with-line"} style={{fontSize: 20, color: COLORS.black}} />
+                              </TouchableOpacity>
+                            }
+                          </View>
+                           
+                             {errors.password && <Text style={{
+                                fontSize: 14,
+                                color: COLORS.warning,
+                                marginTop: 4,
+                                marginStart: 4
+                            }}>{errors.password}</Text>}
                         </View>
 
                         <View style={{
                             width: '100%',
                             marginBottom: 20
                         }}>
+                        <View style={{
+                            width: '100%',
+                            borderRadius: 10,
+                            backgroundColor: COLORS.white,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                          }}>
+
                             <TextInput 
                                 value={confirmPassword}
                                 onChangeText={text => setConfirmPassword(text)}
                                 placeholder='Confirm Password'
                                 placeholderTextColor={COLORS.lightText}
-                                keyboardType='visible-password'
+                                secureTextEntry={hideConfirmPassword ? true : false}
+                                maxLength={40}
                                 style={{
                                     paddingVertical: 10,
                                     paddingHorizontal: 20,
@@ -147,10 +246,30 @@ const SignUp = () => {
                                     color: COLORS.black,
                                     borderRadius: 10,
                                     backgroundColor: COLORS.white }}
-                                />
+                            />
+
+                            {confirmPassword.length > 0 && 
+                              <TouchableOpacity 
+                                onPress={() => setHideConfirmPassword(!hideConfirmPassword)}
+                                activeOpacity={0.9}
+                                style={{
+                                paddingRight: 20
+                              }}>
+                                <Entypo name={hideConfirmPassword ? "eye" : "eye-with-line"} style={{fontSize: 20, color: COLORS.black}} />
+                              </TouchableOpacity>
+                            }
+                          </View>
+                           
+                             {errors.confirmPassword && <Text style={{
+                                fontSize: 14,
+                                color: COLORS.warning,
+                                marginTop: 4,
+                                marginStart: 4
+                            }}>{errors.confirmPassword}</Text>}
                         </View>
 
                         <TouchableOpacity 
+                            onPress={() => handleRegister()}
                             activeOpacity={0.8}
                             style={{
                                 width: '100%',
@@ -215,7 +334,7 @@ const SignUp = () => {
                     <View>
                         <View style={{
                             flexDirection: 'row',
-                            justifyContent: 'space-evenly',
+                            justifyContent: 'space-around',
                             alignItems: 'center',
                             marginTop: 10,
                             marginBottom: 40
@@ -230,14 +349,15 @@ const SignUp = () => {
                         activeOpacity={0.8}
                         style={{
                             width: '100%',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            paddingVertical: 2
                         }}>
                             <Text style={{
                                 fontSize:14,
                                 fontWeight: '400',
                                 color: COLORS.black
                             }}>Already have an account? 
-                            <Text style={{color: COLORS.accent}}>Sign Me In</Text>
+                            <Text style={{color: COLORS.accent}}>  Sign Me In</Text>
                             </Text>
                     </TouchableOpacity>
 
