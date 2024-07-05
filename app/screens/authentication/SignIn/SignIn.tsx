@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid } from 'react-native'
 import React, { useState } from 'react'
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,12 +7,16 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
+import app from "@/firebaseConfig";
+import { getAuth, signInWithEmailAndPassword, User } from 'firebase/auth';
 
 
 
 const SignIn = () => {
 
     const navigation: any = useNavigation();
+
+    const auth = getAuth(app);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] =  useState("");
@@ -54,11 +58,20 @@ const SignIn = () => {
         } else {
             setErrors({});
             setShowErrors(false);
-            console.log("Signed In!");
+            handleLogin(email, password)
         }
-      
-        
     }
+
+    const handleLogin = (email: string, password: string) => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                ToastAndroid.show("Login Successful!", ToastAndroid.LONG);
+            })
+            .catch(error => {
+                console.log(error);
+                ToastAndroid.show("Account Doesn't Exist, Please Sign Up", ToastAndroid.LONG);
+            });
+    };
 
     const LoginWithIcon = ({iconName, onPress, buttonTitle}: any) => {
         return (
@@ -211,7 +224,7 @@ const SignIn = () => {
                                 style={{
                                 paddingRight: 20
                               }}>
-                                <Entypo name={hidePassword ? "eye" : "eye-with-line"} style={{fontSize: 20, color: COLORS.black}} />
+                                <Entypo name={hidePassword ? "eye" : "eye-with-line"} style={{fontSize: 24, color: COLORS.black}} />
                               </TouchableOpacity>
                             }
                           </View>

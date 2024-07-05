@@ -1,9 +1,16 @@
+import React from 'react';
 import { Text, View } from "react-native";
+import { User } from "firebase/auth";
 
-export default function Home() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text> Tuko Home Screen</Text>
-      </View>
-    );
-  }
+type HomeProps = {
+  user: User;
+};
+
+export default function Home({ user }: HomeProps) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Welcome, {user.email}</Text>
+      <Text> Tuko Home Screen</Text>
+    </View>
+  );
+}

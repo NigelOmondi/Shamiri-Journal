@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid } from 'react-native'
 import React, { useState } from 'react'
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -6,6 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
+import app from "@/firebaseConfig";
+import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
 
 
 const SignUp = () => {
@@ -16,9 +18,13 @@ const SignUp = () => {
     const [password, setPassword] =  useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showErrors, setShowErrors] = useState(false);
-    const [errors, setErrors] = useState<any>({});
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [hidePassword, setHidePassword] = useState(true);
     const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
+    const [loading, setIsLoading] = useState(false);
+    
+
+    const auth = getAuth(app);
 
     const getErrors = (email: string, password: string, confirmPassword: string) => {
 
@@ -62,10 +68,17 @@ const SignUp = () => {
         } else {
             setErrors({});
             setShowErrors(false);
-            console.log("Registered!");
+            handleSignIn(email, password)
         }
-      
-        
+    }
+
+    const handleSignIn = (email: any, password: any) => {
+        createUserWithEmailAndPassword(auth, email, password).then(() => {
+            ToastAndroid.show("Account Successfully Created", ToastAndroid.LONG)
+        }).catch(error => {
+            console.log(error)
+            ToastAndroid.show("Account Already Exists, Please Sign In", ToastAndroid.LONG)
+        });
     }
 
     const LoginWithIcon = ({iconName, onPress, buttonTitle}: any) => {
@@ -206,7 +219,7 @@ const SignUp = () => {
                                 style={{
                                 paddingRight: 20
                               }}>
-                                <Entypo name={hidePassword ? "eye" : "eye-with-line"} style={{fontSize: 20, color: COLORS.black}} />
+                                <Entypo name={hidePassword ? "eye" : "eye-with-line"} style={{fontSize: 24, color: COLORS.black}} />
                               </TouchableOpacity>
                             }
                           </View>
@@ -255,7 +268,7 @@ const SignUp = () => {
                                 style={{
                                 paddingRight: 20
                               }}>
-                                <Entypo name={hideConfirmPassword ? "eye" : "eye-with-line"} style={{fontSize: 20, color: COLORS.black}} />
+                                <Entypo name={hideConfirmPassword ? "eye" : "eye-with-line"} style={{fontSize: 24, color: COLORS.black}} />
                               </TouchableOpacity>
                             }
                           </View>
