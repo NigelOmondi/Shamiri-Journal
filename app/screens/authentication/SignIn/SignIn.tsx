@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid, Alert } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +8,7 @@ import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import app from "@/firebaseConfig";
-import { getAuth, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, User, onAuthStateChanged } from 'firebase/auth';
 
 
 
@@ -18,11 +18,24 @@ const SignIn = () => {
 
     const auth = getAuth(app);
 
+
     const [email, setEmail] = useState("");
     const [password, setPassword] =  useState("");
     const [showErrors, setShowErrors] = useState(false);
     const [errors, setErrors] = useState<any>({});
     const [hidePassword, setHidePassword] = useState(true);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          setUser(user);
+         
+        });
+    
+        return () => {
+          unsubscribe();
+        };
+      }, [auth]);
 
     const getErrors = (email: string, password: string) => {
 
@@ -65,17 +78,31 @@ const SignIn = () => {
     const handleLogin = (email: string, password: string) => {
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
+                console.log("Login Successfull");
                 ToastAndroid.show("Login Successful!", ToastAndroid.LONG);
             })
             .catch(error => {
                 console.log(error);
-                ToastAndroid.show("Account Doesn't Exist, Please Sign Up", ToastAndroid.LONG);
+                if (error.code === 'auth/invalid-credential') {
+                    if ( (email !== null) && (email === user?.email)) {
+                        
+                    } else if ( password !== null ) {
+            
+                        ToastAndroid.show("Sorry, wrong password.", ToastAndroid.LONG)
+                    }
+                       
+                    
+                    
+                   
+                   
+                }
             });
     };
 
     const LoginWithIcon = ({iconName, onPress, buttonTitle}: any) => {
         return (
             <TouchableOpacity 
+                onPress={onPress}
                 activeOpacity={0.8}
                 style={{
         
@@ -308,8 +335,13 @@ const SignIn = () => {
                             marginTop: 10,
                             marginBottom: 40
                         }}>
-                            <LoginWithIcon iconName="google" onPress={()=>console.log("google")} buttonTitle="Google"/>
-                            <LoginWithIcon iconName="person" onPress={()=>console.log("anonymous")} buttonTitle="Anonymous"/>
+                            <LoginWithIcon iconName="google" 
+                                            onPress={ () => {Alert.alert("TODO:// Sign In With Google");} } 
+                                           buttonTitle="Google"/>
+
+                            <LoginWithIcon iconName="person" 
+                                           onPress={ () => {Alert.alert("TODO:// Sign In Anonymously");} } 
+                                           buttonTitle="Anonymous"/>
                         </View>
                     </View>
 

@@ -1,16 +1,72 @@
 import React from 'react';
-import { Text, View } from "react-native";
-import { User } from "firebase/auth";
+import { Text, View, StatusBar, TouchableOpacity } from "react-native";
+import { COLORS } from '@/constants/CustomColors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { getAuth, User, signOut } from 'firebase/auth';
+import app from "@/firebaseConfig";
 
 type HomeProps = {
   user: User;
 };
 
+const auth = getAuth(app);
+
 export default function Home({ user }: HomeProps) {
+
+  const handleSignOut = () => {
+    try {
+      auth.signOut();
+      console.log("User Signed Out");
+      
+    } catch (error) {
+      console.log(error);
+      
+      
+    }
+  }
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Welcome, {user.email}</Text>
-      <Text> Tuko Home Screen</Text>
+      <StatusBar backgroundColor={COLORS.bgLineGradOne} barStyle="dark-content" />
+      <LinearGradient 
+            colors={[COLORS.bgLineGradOne, 
+                    COLORS.bgLineGradTwo,
+                    COLORS.bgLineGradThree,
+                    COLORS.bgLineGradFour,
+                    COLORS.bgLineGradFive,
+                    COLORS.bgLineGradSix]} 
+
+            style={{width: '100%', 
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+            }}>
+               <Text style={{
+                color: COLORS.black,
+                fontSize: 20,
+               }}>Welcome</Text>
+               <Text style={{
+                color: COLORS.black,
+                fontSize: 30,
+                fontWeight: '700',
+                letterSpacing: 2,
+                marginTop: 10,
+                marginBottom: 40
+               }}>{ user.email ? user.email : "Anonymous" }</Text>
+               <TouchableOpacity 
+                  onPress={() => handleSignOut()}
+                  activeOpacity={0.8}
+                  style={{
+                  marginTop: 20,
+                  backgroundColor: COLORS.warning,
+                  paddingVertical: 8,
+                  paddingHorizontal: 20,
+                  borderRadius: 8
+               }}>
+                  <Text style={{color: COLORS.white}}>Sign Out</Text>
+               </TouchableOpacity>
+            </LinearGradient>
+
+     
     </View>
   );
 }

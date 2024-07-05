@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1089570103783",
+    "project_id": "smart-journal-4da1f",
+    "storage_bucket": "smart-journal-4da1f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089570103783:android:c6f1ac0c73d45c8a5f5d42",
+        "android_client_info": {
+          "package_name": "com.nigelomondi.smartjournal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9-XOlcZoZ8l8-bgsgkhrw4rTinVFiIzU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

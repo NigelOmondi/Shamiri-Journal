@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,7 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import app from "@/firebaseConfig";
-import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, User, signInAnonymously } from 'firebase/auth';
 
 
 const SignUp = () => {
@@ -77,13 +77,24 @@ const SignUp = () => {
             ToastAndroid.show("Account Successfully Created", ToastAndroid.LONG)
         }).catch(error => {
             console.log(error)
-            ToastAndroid.show("Account Already Exists, Please Sign In", ToastAndroid.LONG)
+            if (error.code === 'auth/email-already-in-use') {
+                ToastAndroid.show("Email Already Exists, Please Sign In", ToastAndroid.LONG)
+                return setErrors({email: "Email already in use"})
+               
+            } else if (error.code === 'auth/invalid-email') {
+                ToastAndroid.show("Email is Invalid", ToastAndroid.LONG)
+                return setErrors({email: "Email is invalid"})
+            }
+            setErrors({})
+            setShowErrors(false);
+           
         });
     }
 
     const LoginWithIcon = ({iconName, onPress, buttonTitle}: any) => {
         return (
             <TouchableOpacity 
+                onPress={onPress}
                 activeOpacity={0.8}
                 style={{
         
@@ -117,7 +128,12 @@ const SignUp = () => {
                     COLORS.bgLineGradFour,
                     COLORS.bgLineGradFive,
                     COLORS.bgLineGradSix]} 
-            style={{width: '100%', height: '100%', paddingVertical: 10, paddingHorizontal: 10}}>
+
+            style={{width: '100%', 
+                    height: '100%', 
+                    paddingVertical: 10, 
+                    paddingHorizontal: 10
+            }}>
 
                 <TouchableOpacity 
                     activeOpacity={0.8}
@@ -352,8 +368,13 @@ const SignUp = () => {
                             marginTop: 10,
                             marginBottom: 40
                         }}>
-                            <LoginWithIcon iconName="google" onPress={()=>console.log("google")} buttonTitle="Google"/>
-                            <LoginWithIcon iconName="person" onPress={()=>console.log("anonymous")} buttonTitle="Anonymous"/>
+                            <LoginWithIcon iconName="google" 
+                                           onPress={ () => {Alert.alert("TODO:// Sign Up With Google")} } 
+                                           buttonTitle="Google"/>
+                                           
+                            <LoginWithIcon iconName="person" 
+                                           onPress={ () => {Alert.alert("TODO:// Sign Up Anonymously")} } 
+                                           buttonTitle="Anonymous"/>
                         </View>
                     </View>
 
