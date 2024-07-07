@@ -1,17 +1,39 @@
-import React from 'react';
-import { Text, View, StatusBar, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { Text, View, StatusBar, TouchableOpacity, Image } from "react-native";
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getAuth, User, signOut } from 'firebase/auth';
 import app from "@/firebaseConfig";
+import axios from "axios";
 
 type HomeProps = {
   user: User;
 };
 
+const api = axios.create({
+  baseURL: 'http://localhost:8800'
+});
+
+
 const auth = getAuth(app);
 
 export default function Home({ user }: HomeProps) {
+
+  const [books, setBooks] = useState({});
+
+  useEffect(() => {
+    const fetchAllBooks = async () => {
+      try {
+        const res = await api.get("/books");
+        console.log("Response",res);
+        setBooks(res.data);
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchAllBooks()
+  }, []);
 
   const handleSignOut = () => {
     try {
@@ -51,7 +73,20 @@ export default function Home({ user }: HomeProps) {
                 letterSpacing: 2,
                 marginTop: 10,
                 marginBottom: 40
-               }}>{ user.email ? user.email : "Anonymous" }</Text>
+               }}>{ user.email ? user.email : "Anonymous" }
+            </Text>
+
+            {/* <View>
+              <Text>All Books</Text>
+              <View>
+                {books.map(book => (
+                  <View>
+                    {book.cover && <Image source={book.cover} />}
+                  </View>
+                ))}
+              </View>
+            </View> */}
+
                <TouchableOpacity 
                   onPress={() => handleSignOut()}
                   activeOpacity={0.8}
