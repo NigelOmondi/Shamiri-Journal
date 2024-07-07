@@ -1,8 +1,9 @@
 import express from "express";
 import mysql from "mysql2";
 import cors from "cors";
+import dotenv from "dotenv";
 
-require('dotenv').config();
+dotenv.config({ path: '../.env' });
 
 const app = express();
 
@@ -24,6 +25,7 @@ const db = mysql.createConnection({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
 });
+
 // If there's an authentication problem,
 // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YourPasswordHere;'
 
@@ -97,6 +99,7 @@ app.put("/journals/:id", (req, res) => {
 })
 
 app.listen(8090, () => {
+
     console.log("Connected to the Backend!");
     
 });
