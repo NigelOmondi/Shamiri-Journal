@@ -11,7 +11,7 @@ type HomeProps = {
 };
 
 const api = axios.create({
-  baseURL: 'http://localhost:8800'
+  baseURL: 'http://localhost:8090'
 });
 
 
