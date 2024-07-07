@@ -2,16 +2,43 @@ import express from "express";
 import mysql from "mysql2";
 import cors from "cors";
 import dotenv from "dotenv";
+import tedious from "tedious";
+import { Request, TYPES } from "tedious";
+
+var Connection = tedious.Connection;
 
 dotenv.config({ path: '../.env' });
 
+
+var config = {  
+    server: 'shamiri.database.windows.net',
+    authentication: {
+        type: 'default',
+        options: {
+            userName: process.env.AzureDB_USER,
+            password: process.env.AzureDB_PASSWORD 
+        }
+    },
+    options: {
+        // If you are on Microsoft Azure, you need encryption:
+        encrypt: true,
+        database: process.env.AzureDB_NAME 
+    }
+};  
+var connection = new Connection(config);  
+connection.on('connect', function(err) {  
+    if (err) {
+        console.error("Error connecting: ", err);
+    } else {
+        console.log("Connected to Azure SQL Database!");  
+    } 
+});
+
+connection.connect();
+
 const app = express();
 
-var corsOptions = {
-    origin: ['*']
-  };
-
-app.use(cors(corsOptions))
+app.use(cors({ origin: ['*'] }));
 
 //Allows client to send json data
 app.use(express.json());
@@ -19,84 +46,99 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
-});
-
-// If there's an authentication problem,
-// ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'YourPasswordHere;'
-
-app.get("/", (req, res) => {
-     res.json("This is a response from the backend.")
-})
 
 app.get("/journals", (req, res) => {
-
-    const q = "SELECT * FROM journals";
-
-    db.query(q, (err, data) => {
+    const query = "SELECT * FROM journals";
+    const request = new Request(query, (err, rowCount, rows) => {
         if (err) {
-            return res.json(err)
-        } else {
-            return res.json(data)
+            console.error(err);
+            return res.status(500).json(err);
         }
     });
+
+    let result = [];
+    request.on('row', function(columns) {
+        let row = {};
+        columns.forEach(function(column) {
+            row[column.metadata.colName] = column.value;
+        });
+        result.push(row);
+    });
+
+    request.on('requestCompleted', function() {
+        res.json(result);
+    });
+
+    connection.execSql(request);
 });
 
 app.post("/journals", (req, res) => {
-    const q = "INSERT INTO journals (`title`,  `content`, `category`, `date`) VALUES (?)"
-    const values = [
-        req.body.title, 
-        req.body.content, 
-        req.body.category,
-        req.body.date
-    ]
-
-    db.query(q, [values], (err, data) => {
+    const query = "INSERT INTO journals (title, content, category, date) OUTPUT INSERTED.id VALUES (@title, @content, @category, @date);";
+    const request = new Request(query, (err) => {
         if (err) {
-            return res.json(err)
-        } else {
-            console.log(`Journal titled "${req.body.title}" successfully added!`);
-            return res.json(`Journal titled "${req.body.title}" successfully added with ID ${data.insertId}!`);
+            console.error(err);
+            return res.status(500).json(err);
         }
-    })
+    });
+
+    request.addParameter('title', TYPES.NVarChar, req.body.title);
+    request.addParameter('content', TYPES.NVarChar, req.body.content);
+    request.addParameter('category', TYPES.NVarChar, req.body.category);
+    request.addParameter('date', TYPES.DateTime, new Date(req.body.date));
+
+    request.on('row', function(columns) {
+        columns.forEach(function(column) {
+            console.log("Inserted journal id is " + column.value);
+        });
+    });
+
+    request.on('requestCompleted', function() {
+        res.json("Journal successfully added.");
+    });
+
+    connection.execSql(request);
+});
+
+app.put("/journals/:id", (req, res) => {
+    const query = "UPDATE journals SET title = @title, content = @content, category = @category, date = @date WHERE id = @id;";
+    const request = new Request(query, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json(err);
+        }
+    });
+
+    request.addParameter('id', TYPES.Int, req.params.id);
+    request.addParameter('title', TYPES.NVarChar, req.body.title);
+    request.addParameter('content', TYPES.NVarChar, req.body.content);
+    request.addParameter('category', TYPES.NVarChar, req.body.category);
+    request.addParameter('date', TYPES.DateTime, new Date(req.body.date));
+
+    request.on('requestCompleted', function() {
+        res.json("Journal successfully updated.");
+    });
+
+    connection.execSql(request);
 });
 
 app.delete("/journals/:id", (req, res) => {
-    const journalId = req.params.id;
-    const q = "DELETE FROM journals WHERE id = ?"
-
-    db.query(q, [journalId], (err, data) => {
+    const query = "DELETE FROM journals WHERE id = @id;";
+    const request = new Request(query, (err) => {
         if (err) {
-            return res.json(err)
-        } else {
-            return res.json(`Journal successfully deleted`);
+            console.error(err);
+            return res.status(500).json(err);
         }
-    })
-})
+    });
 
-app.put("/journals/:id", (req, res) => {
-    const journalId = req.params.id;
-    const q = "UPDATE journals SET `title` = ?, `content` = ?, `category` = ?, `date` = ? WHERE id = ?"
+    request.addParameter('id', TYPES.Int, req.params.id);
 
-    const values = [
-        req.body.title, 
-        req.body.content, 
-        req.body.category,
-        req.body.date
-    ]
+    request.on('requestCompleted', function() {
+        res.json("Journal successfully deleted.");
+    });
 
-    db.query(q, [...values, journalId], (err, data) => {
-        if (err) {
-            return res.json(err)
-        } else {
-            return res.json(`Journal titled "${req.body.title}" successfully UPDATED with ID ${data.insertId}!`);
-        }
-    })
-})
+    connection.execSql(request);
+});
+
 
 app.listen(8090, () => {
 
