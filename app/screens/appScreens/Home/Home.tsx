@@ -11,7 +11,7 @@ type HomeProps = {
 };
 
 const api = axios.create({
-  baseURL: 'http://localhost:8090'
+  baseURL: 'https://shaminstitute.onrender.com'
 });
 
 
@@ -19,20 +19,20 @@ const auth = getAuth(app);
 
 export default function Home({ user }: HomeProps) {
 
-  const [books, setBooks] = useState({});
+  const [journals, setJournals] = useState({});
 
   useEffect(() => {
-    const fetchAllBooks = async () => {
+    const fetchAllJournals = async () => {
       try {
-        const res = await api.get("/books");
-        console.log("Response",res);
-        setBooks(res.data);
+        const res = await api.get("/journals");
+        console.log("Response",res.data);
+        setJournals(res.data);
 
       } catch (error) {
         console.log(error);
       }
     }
-    fetchAllBooks()
+    fetchAllJournals()
   }, []);
 
   const handleSignOut = () => {
@@ -46,6 +46,7 @@ export default function Home({ user }: HomeProps) {
       
     }
   }
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <StatusBar backgroundColor={COLORS.bgLineGradOne} barStyle="dark-content" />
