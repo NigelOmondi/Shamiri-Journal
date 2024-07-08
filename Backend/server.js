@@ -46,6 +46,9 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) => {
+    res.json("Welcome home")
+})
 
 app.get("/journals", (req, res) => {
     const query = "SELECT * FROM journals";

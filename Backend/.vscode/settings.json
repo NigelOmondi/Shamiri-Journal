@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/80c09b88-b4cf-4b9b-b517-ed95a7f43fcb/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/shaminstitute",
+    "appService.deploySubpath": "."
+}
