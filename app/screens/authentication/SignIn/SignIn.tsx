@@ -25,6 +25,7 @@ const SignIn = () => {
     const [errors, setErrors] = useState<any>({});
     const [hidePassword, setHidePassword] = useState(true);
     const [user, setUser] = useState<User | null>(null);
+    const [isSigningIn, setIsSigningIn] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -61,6 +62,7 @@ const SignIn = () => {
     }
 
     const handleSignIn = () => {
+       
         const errors = getErrors(email, password)
 
         if(Object.keys(errors).length > 0) {
@@ -76,6 +78,7 @@ const SignIn = () => {
     }
 
     const handleLogin = (email: string, password: string) => {
+        setIsSigningIn(true);
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 console.log("Login Successfull");
@@ -87,7 +90,12 @@ const SignIn = () => {
                     ToastAndroid.show("Invalid Credentials.", ToastAndroid.LONG);
                  
                     setErrors({password: "Invalid Credentials"})
+                } else if (error.code === 'auth/network-request-failed') {
+                    ToastAndroid.show("Problem with your internet connection.", ToastAndroid.LONG);
+                    setErrors({password: "Check your internet connection"})
                 }
+                setIsSigningIn(false);
+
             });
     };
 
@@ -269,11 +277,11 @@ const SignIn = () => {
                                 borderRadius: 10,
                                 elevation: 8,
                                 shadowColor: COLORS.accent
-                            }}>
-                            <Text style={{
-                                color: COLORS.white,
-                                fontSize: 16
-                            }}>Sign In</Text>
+                            }}
+                            disabled={isSigningIn}>
+                            <Text style={{color: COLORS.white, fontSize: 16}}>
+                                {isSigningIn ? "Signing you in..." : "Sign In"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
 

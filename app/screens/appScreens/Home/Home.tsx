@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, StatusBar, TouchableOpacity, Image } from "react-native";
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAuth, User, signOut } from 'firebase/auth';
+import { getAuth, User } from 'firebase/auth';
 import app from "@/firebaseConfig";
 import axios from "axios";
+
+
 
 type HomeProps = {
   user: User;
