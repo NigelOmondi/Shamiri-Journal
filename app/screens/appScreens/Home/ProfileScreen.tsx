@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, ToastAndroid, Button, TextInput, Image } from 'react-native'
+import { StyleSheet, Text, View, ToastAndroid, Button, TextInput, Image, TouchableOpacity } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { COLORS } from '@/constants/CustomColors'
 import axios from 'axios'
 import app from "@/firebaseConfig";
 import { getAuth, User, onAuthStateChanged } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import { Entypo } from '@expo/vector-icons';
 
 const ProfileScreen = () => {
 
@@ -26,33 +27,28 @@ const ProfileScreen = () => {
   const [user, setUser] = useState<User | null>();
   const [email, setEmail] = useState<string>();
   const [photo, setPhoto] = useState();
+  const [password, setPassword] = useState<string>('');
   const [isSaveEnabled, setIsSaveEnabled] = useState(false)
   const [loading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [hidePassword, setHidePassword] = useState(false);
+
 
  
 
-
   useEffect(() => {
-    setIsSaveEnabled(email !== '' && photo !== '');
-  }, [email, photo]);
+    setIsSaveEnabled(email !== '' && photo !== '' && password !== '');
+  }, [email, photo, password]);
 
-  const handleSave = async () => {
-    const updatedDate = new Date().toISOString(); // Format date as needed
-    try {
-      await axios.post(`https://shaminstitute.onrender.com/`, {
-        email,
-        photo,
-        date: updatedDate,
-      });
+  const handleSave = () => {
+    
       ToastAndroid.show("Your Profile was successfully Saved.", ToastAndroid.LONG);
       setIsSaveEnabled(false);
   
       console.log('Profile saved successfully');
     
-    } catch (error) {
-      console.error(error);
-   
-    }
+
   };
 
 
@@ -72,7 +68,50 @@ const ProfileScreen = () => {
         value={user?.email ? user.email : "Anonymous"}
         onChangeText={text => setEmail(text)}
         style={styles.textInput}
+        
     />
+                        <View style={{
+                            width: '100%',
+                            marginBottom: 20
+                        }}>
+                            <View style={{
+                            width: '100%',
+                            borderRadius: 10,
+                            backgroundColor: COLORS.white,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                          }}>
+
+                        <TextInput 
+                                value={password}
+                                onChangeText={text => setPassword(text)}
+                                placeholder='Password'
+                                placeholderTextColor={COLORS.lightText}
+                                secureTextEntry={hidePassword ? true : false}
+                                maxLength={40}
+                                style={{
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 20,
+                                    fontSize: 17,
+                                    fontFamily: 'Lato-LightItalic',
+                                    // color: COLORS.black,
+                                    borderRadius: 10,
+                                    backgroundColor: COLORS.white }}
+                            />
+                            {password.length > 0 && 
+                              <TouchableOpacity 
+                                onPress={() => setHidePassword(!hidePassword)}
+                                activeOpacity={0.9}
+                                style={{
+                                paddingRight: 20
+                              }}>
+                                <Entypo name={hidePassword ? "eye" : "eye-with-line"} style={{fontSize: 24, color: COLORS.black}} />
+                              </TouchableOpacity>
+                            }
+                          </View>
+                           
+                        </View>
 
     <View>
       <Button 

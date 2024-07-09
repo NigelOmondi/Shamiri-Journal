@@ -26,68 +26,86 @@ const JournalsScreen = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const [refreshing, setRefreshing] = React.useState(false);
+  const [filter, setFilter] = useState<'daily' | 'weekly' | 'monthly' | 'all'>('all');
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const onRefresh = useCallback(() => {
+    fetchAllJournals();
     setRefreshing(true);
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, []);
+  }, [filter, sections, title, category, content]);
  
+  const fetchAllJournals = async () => {
+    
+    try {
+      const res = await api.get("/journals");
+      let journals = res.data;
 
-  // useEffect(() => {
-  //   const fetchAllJournals = async () => {
-  //     try {
-  //       const res = await api.get("/journals");
-  //       const groupedByDate = res.data.reduce((acc: any, journal: any) => {
-  //         const date = journal.date.split('T')[0]; // Extract date part only
-  //         if (!acc[date]) {
-  //           acc[date] = [];
-  //         }
-  //         acc[date].push(journal);
-  //         return acc;
-  //       }, {});
+      if (filter === 'daily') {
+        journals = journals.filter((journal: any) => {
+          const journalDate = new Date(journal.date);
+          const today = new Date();
+          //console.log("Daily Journals: ", journalDate);
+          
+          return journalDate.toDateString() === today.toDateString();
+        });
+      } else if (filter === 'weekly') {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        journals = journals.filter((journal: any) => {
+          const journalDate = new Date(journal.date);
+          return journalDate >= oneWeekAgo && journalDate <= new Date();
+        });
+      } else if (filter === 'monthly') {
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        journals = journals.filter((journal: any) => {
+          const journalDate = new Date(journal.date);
+          return journalDate >= oneMonthAgo && journalDate <= new Date();
+        });
+      }  else if (filter === 'all') {
+        //console.log("All journals:", journals);
+      }
 
-  //       const sections = Object.keys(groupedByDate).map(date => ({
-  //         title: date,
-  //         data: groupedByDate[date],
-  //       }));
+      const groupedByDate = journals.reduce((acc: { [key: string]: any[] }, journal: any) => {
+        const date = journal.date.split('T')[0]; // Extract date part only
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(journal);
+        return acc;
+      }, {});
 
-  //       setSections(sections);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-  //   fetchAllJournals();
-  // }, [,sections]);
+      const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+      
+
+      const sections = sortedDates.map(date => {
+        const formattedDate = new Date(date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+        });
+        return {
+          title: formattedDate,
+          data: groupedByDate[date],
+        };
+      });
+     
+      setSections(sections);
+      
+    } catch (error) {
+      console.error(error);
+    } finally {
+      
+      setRefreshing(false); // Make sure to set refreshing to false after fetching
+
+    }
+  };
+  
 
   useEffect(() => {
-    const fetchAllJournals = async () => {
-      try {
-        const res = await api.get("/journals");
-        const groupedByDate = res.data.reduce((acc: { [key: string]: any[] }, journal: any) => {
-          const date = journal.date.split('T')[0]; // Extract date part only
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          acc[date].push(journal);
-          return acc;
-        }, {});
-  
-        // Sort the dates in descending order
-        const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b as string).getTime() - new Date(a as string).getTime());
-  
-        // Map sorted dates to create sections
-        const sections = sortedDates.map(date => ({
-          title: date,
-          data: groupedByDate[date],
-        }));
-  
-        setSections(sections);
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchAllJournals();
   }, [,sections, title, category, content]);
   
@@ -175,9 +193,75 @@ const JournalsScreen = () => {
     <View>
       <View>
 
-      
+      <View style={styles.filterContainer}>
+  <TouchableOpacity
+    onPress={() => setFilter('daily')}
+    style={[
+      styles.filterButton,
+      filter === 'daily' ? styles.filterButtonActive : styles.filterButtonInactive,
+    ]}
+  >
+    <Text
+      style={[
+        styles.filterText,
+        filter === 'daily' ? styles.filterTextActive : styles.filterTextInactive,
+      ]}
+    >
+      {isFiltering && filter === 'daily' ? "Filtering..." : "Daily"}
+    </Text>
+  </TouchableOpacity>
+  <TouchableOpacity
+    onPress={() => setFilter('weekly')}
+    style={[
+      styles.filterButton,
+      filter === 'weekly' ? styles.filterButtonActive : styles.filterButtonInactive,
+    ]}
+  >
+    <Text
+      style={[
+        styles.filterText,
+        filter === 'weekly' ? styles.filterTextActive : styles.filterTextInactive,
+      ]}
+    >
+      {isFiltering && filter === 'weekly' ? "Filtering..." : "Weekly"}
+    </Text>
+  </TouchableOpacity>
+  <TouchableOpacity
+    onPress={() => setFilter('monthly')}
+    style={[
+      styles.filterButton,
+      filter === 'monthly' ? styles.filterButtonActive : styles.filterButtonInactive,
+    ]}
+  >
+    <Text
+      style={[
+        styles.filterText,
+        filter === 'monthly' ? styles.filterTextActive : styles.filterTextInactive,
+      ]}
+    >
+      {isFiltering && filter === 'monthly' ? "Filtering..." : "Monthly"}
+    </Text>
+  </TouchableOpacity>
+  <TouchableOpacity
+    onPress={() => setFilter('all')}
+    style={[
+      styles.filterButton,
+      filter === 'all' ? styles.filterButtonActive : styles.filterButtonInactive,
+    ]}
+  >
+    <Text
+      style={[
+        styles.filterText,
+        filter === 'all' ? styles.filterTextActive : styles.filterTextInactive,
+      ]}
+    >
+      {isFiltering && filter === 'all' ? "Filtering..." : "All"}
+    </Text>
+  </TouchableOpacity>
+</View>
 
-        <View>
+
+        <View style={{marginBottom: 180}}>
         <SectionList
           sections={sections}
           keyExtractor={(item, index) => item.id.toString()}
@@ -197,7 +281,7 @@ const JournalsScreen = () => {
                       transparent={false}
                       visible={modalVisible}
                       onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
+                        Alert.alert('Closed without changes.');
                         setModalVisible(!modalVisible);
                     }}>
                       <Text style={{textAlign: 'center', marginTop: 40, fontFamily: 'Lato-Bold', fontSize: 30}}>Edit Entry</Text>
@@ -229,12 +313,12 @@ const JournalsScreen = () => {
                           placeholder='Enter Your Description ...'
                           value={content}
                           onChangeText={text => setContent(text)}
-                          style={styles.textInput}
+                          style={[styles.textInput, {marginBottom: 30}]}
                       />
-                      <Button 
-                 title={isSaving ? "Saving Changes..." : "Save Edit"}
-                  onPress={() => handleSaveEdit(item)} 
-                   disabled={!isSaveEnabled || isSaving}
+                      <Button
+                         title={isSaving ? "Saving Changes..." : "Save Edit"}
+                         onPress={() => handleSaveEdit(item)} 
+                         disabled={!isSaveEnabled || isSaving}
                   >
               
               </Button>
@@ -346,22 +430,17 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-   
   },
   modalView: {
-    // margin: 20,
-    // backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
    
-    shadowColor: '#000',
+    // shadowColor: '#000',
    
-    shadowOpacity: 0.25,
+    // shadowOpacity: 0.25,
    
-    elevation: 2,
-    width: '90%'
+    // elevation: 2,
+    width: '100%'
   },
   button: {
     borderRadius: 20,
@@ -398,6 +477,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Lato-Regular',
     marginVertical: 10,
+    
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 10,
+  },
+  filterButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  filterButtonActive: {
+    backgroundColor: COLORS.accent,
+  },
+  filterButtonInactive: {
+    backgroundColor: '#D3D3D3', // Light grey for inactive buttons
+  },
+  filterText: {
+    fontFamily: 'Lato-Bold',
+  },
+  filterTextActive: {
+    color: COLORS.white,
+  },
+  filterTextInactive: {
+    color: '#000000', // Black color for inactive text
   },
  
 })

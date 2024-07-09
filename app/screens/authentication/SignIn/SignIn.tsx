@@ -352,7 +352,8 @@ const SignIn = () => {
                             width: '100%',
                             alignItems: 'center',
                             paddingVertical: 2
-                        }}>
+                        }}
+                       >
                             <Text style={{
                                 fontSize:14,
                                 fontWeight: '400',

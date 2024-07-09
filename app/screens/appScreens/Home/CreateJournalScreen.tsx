@@ -86,7 +86,7 @@ const CreateJournal = () => {
                 style={styles.textInput}
             />
 
-            <View>
+            <View style={{marginTop: 10}}>
               <Button 
                   title={isSaving ? "Saving..." : "Save"}
                   onPress={handleSave} 

@@ -22,6 +22,7 @@ const SignUp = () => {
     const [hidePassword, setHidePassword] = useState(true);
     const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
     const [loading, setIsLoading] = useState(false);
+    const [isSigningIn, setIsSigningIn] = useState(false);
     
 
     const auth = getAuth(app);
@@ -310,11 +311,11 @@ const SignUp = () => {
                                 borderRadius: 10,
                                 elevation: 8,
                                 shadowColor: COLORS.accent
-                            }}>
-                            <Text style={{
-                                color: COLORS.white,
-                                fontSize: 16
-                            }}>Register</Text>
+                            }}
+                            disabled={isSigningIn}>
+                           <Text style={{color: COLORS.white, fontSize: 16}}>
+                                {isSigningIn ? "Registering..." : "Register"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
