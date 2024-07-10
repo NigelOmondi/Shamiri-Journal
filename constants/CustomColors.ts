@@ -13,4 +13,5 @@ export const COLORS = {
 
     warning: '#F88070',
     accent: '#FF6060',
+    green: '#008000'
 }
