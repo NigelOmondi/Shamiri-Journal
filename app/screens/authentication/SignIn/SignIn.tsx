@@ -8,7 +8,7 @@ import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import app from "@/firebaseConfig";
-import { getAuth, signInWithEmailAndPassword, User, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, User, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 
 
 
@@ -30,13 +30,25 @@ const SignIn = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           setUser(user);
-         
+          console.log("User's photo url",user?.photoURL);
         });
     
         return () => {
           unsubscribe();
         };
-      }, [auth]);
+    }, [auth]);
+
+      const resetPassword = () => {
+        if (user) {
+          sendPasswordResetEmail(auth, email).then(() => {
+            Alert.alert('Password reset email sent successfully');
+          }).catch((error) => {
+            console.log(error.message);
+            
+          });
+      
+        }
+      }
 
     const getErrors = (email: string, password: string) => {
 

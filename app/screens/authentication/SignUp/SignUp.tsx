@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput, ToastAndroid, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { COLORS } from '@/constants/CustomColors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -7,7 +7,14 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import app from "@/firebaseConfig";
-import { getAuth, createUserWithEmailAndPassword, User, signInAnonymously } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, User, signInAnonymously, GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
+// import { GoogleSignin, } from '@react-native-google-signin/google-signin';
+
+const provider = new GoogleAuthProvider();
+
+const auth = getAuth(app);
+
+// signInWithRedirect(auth, provider);
 
 
 const SignUp = () => {
@@ -23,9 +30,31 @@ const SignUp = () => {
     const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
     const [loading, setIsLoading] = useState(false);
     const [isSigningIn, setIsSigningIn] = useState(false);
-    
+    const [userInfo, setUserInfo] = useState<any>();
+    const [googleSignInError, setGoogleSignInError] = useState<any>();
 
-    const auth = getAuth(app);
+    // useEffect(() => {
+    //     GoogleSignin.configure();
+    // }, [])
+
+    // const signInWithGoogle = async () => {
+    //     try {
+    //         await GoogleSignin.hasPlayServices();
+    //         const signedInUser = GoogleSignin.signIn()
+    //         setUserInfo(signedInUser)
+    //         console.log("User Info:", userInfo);
+            
+    //     } catch (error) {
+    //         setGoogleSignInError(error)
+    //     }
+       
+    // }
+    
+    // const logOut = () => {
+    //     setUserInfo('')
+    //     GoogleSignin.revokeAccess();
+    //     GoogleSignin.signOut()
+    // }
 
     const getErrors = (email: string, password: string, confirmPassword: string) => {
 
@@ -370,7 +399,7 @@ const SignUp = () => {
                             marginBottom: 40
                         }}>
                             <LoginWithIcon iconName="google" 
-                                           onPress={ () => {Alert.alert("TODO:// Sign Up With Google")} } 
+                                           onPress={ () => {Alert.alert("TODO:// Sign In With Google")} } 
                                            buttonTitle="Google"/>
                                            
                             <LoginWithIcon iconName="person" 

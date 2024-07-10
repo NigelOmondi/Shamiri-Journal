@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, ActivityIndicator, } from "react-native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from "./screens/appScreens/Home/Home";
 import OnBoarding from "./screens/authentication/OnBoarding/OnBoarding";
 import SignIn from "./screens/authentication/SignIn/SignIn";
 import SignUp from "./screens/authentication/SignUp/SignUp";
 import app from "@/firebaseConfig";
 import { getAuth, User, onAuthStateChanged } from 'firebase/auth';
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TabNavigation from "./navigations/TabNavigation";
-import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import * as SplashScreen from 'expo-splash-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,11 +22,6 @@ export default function Index() {
     'Lato-LightItalic': require('../assets/fonts/Lato-LightItalic.ttf'),
   });
 
-  // useEffect(() => {
-  //   if (loaded || error) {
-  //     SplashScreen.hideAsync();
-  //   }
-  // }, []);
 
 
   const [loading, setIsLoading] = useState(true);

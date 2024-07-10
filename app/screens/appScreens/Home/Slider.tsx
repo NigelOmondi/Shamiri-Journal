@@ -55,14 +55,15 @@ export default Slider
 
 const styles = StyleSheet.create({
     heading: {
-        fontSize: 20,
+        fontSize: 22,
         fontFamily: 'Lato-Bold',
-        marginBottom: 10
+        marginBottom: 15
     },
     sliderImage :{
         width: 270,
         height: 150,
         borderRadius: 20,
-        objectFit: 'contain'
+        objectFit: 'contain',
+
     }
 })

@@ -35,7 +35,7 @@ const Header = () => {
                 style={styles.userImage}
             />
             <View>
-                <Text style={{color:COLORS.white, fontFamily: 'Lato-Bold'}}>Welcome</Text>
+                <Text style={{color:COLORS.white, fontFamily: 'Lato-Bold'}}>Welcome back,</Text>
                 <Text style={{color:COLORS.white, fontSize:13, fontFamily: 'Lato-Bold'}}>{ user?.email ? user.email : "Anonymous" }</Text>
             </View>
            
