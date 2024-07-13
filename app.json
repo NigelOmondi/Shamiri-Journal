@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Shamiri-Journal",
-    "slug": "Shamiri-Journal",
+    "name": "ShamiriJournal",
+    "slug": "ShamiriJournal",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/3d-white-clip.png",
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 22,
+      "versionCode": 23,
       "package": "com.nigelomondi.smartjournal"
     },
     "web": {
@@ -34,12 +34,6 @@
       "@react-native-google-signin/google-signin",
       "expo-camera",
       "expo-font"
-      // [
-      //   "expo-font",
-      //   {
-      //     "fonts": ["./assets/fonts/Lato-Regular.ttf", "./assets/fonts/Lato-Light.ttf", "./assets/fonts/Lato-Bold.ttf"]
-      //   }
-      // ]
     ],
     "experiments": {
       "typedRoutes": true
