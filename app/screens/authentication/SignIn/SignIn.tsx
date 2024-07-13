@@ -94,7 +94,7 @@ const SignIn = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 console.log("Login Successfull");
-                ToastAndroid.show("Login Successful!", ToastAndroid.LONG);
+                ToastAndroid.show("Login Successful!", ToastAndroid.SHORT);
             })
             .catch(error => {
                 console.log(error);

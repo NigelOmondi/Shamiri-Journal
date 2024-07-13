@@ -29,11 +29,11 @@ const CreateJournal = () => {
     const updatedDate = new Date().toISOString();
     setIsSaving(true);
     try {
-      await axios.post(`https://shaminstitute.onrender.com/journals`, {
-        title,
-        category,
-        content,
-        date: updatedDate,
+      let result = await axios.post(`https://shaminstitute.onrender.com/journals`, {
+        "title":title,
+        "category":category,
+        "content":content,
+        "date": updatedDate,
       });
       setIsSaving(false);
       ToastAndroid.show("Journal Successfully Saved.", ToastAndroid.LONG);
@@ -55,7 +55,7 @@ const CreateJournal = () => {
     
     <View>
       <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={{textAlign: 'center', marginTop: 40, fontFamily: 'Lato-Bold', fontSize: 30}}>Log a Journal</Text>
+      <Text style={{textAlign: 'center', marginTop: 40, fontFamily: 'Lato-Bold', fontSize: 30}}>I want to log a new entry,</Text>
       <View style={styles.container}>
 
         <TextInput 

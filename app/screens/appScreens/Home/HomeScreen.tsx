@@ -1,8 +1,8 @@
-import { Dimensions, StyleSheet, Text, View, Animated } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, Animated, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Header from './Header'
 import Slider from './Slider'
-import QuotesSlider from './QuotesSlider'
+
 
 const HomeScreen = () => {
   
@@ -14,7 +14,10 @@ const HomeScreen = () => {
       <View style={{padding: 20}}>
          <Slider />
          {/* <Categories /> */}
-         <QuotesSlider />
+    
+         <View>
+          <Image source={require('../../../../assets/images/istockphoto.jpg')} style={styles.image}/>
+         </View>
       </View>
      
     </View>
@@ -23,4 +26,12 @@ const HomeScreen = () => {
 
 export default HomeScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  image: {
+    height: 300,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center', 
+    marginTop: 20,
+  }
+})

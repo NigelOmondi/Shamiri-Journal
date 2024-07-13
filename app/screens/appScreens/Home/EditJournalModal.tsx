@@ -12,10 +12,10 @@ const EditJournalModal = ({ isVisible, item, onClose }: any) => {
     const updatedDate = new Date().toISOString(); // Format date as needed
     try {
       await axios.put(`https://shaminstitute.onrender.com/journals/${item.id}`, {
-        title,
-        category,
-        content,
-        date: updatedDate,
+        "title":title,
+        "category":category,
+        "content":content,
+        "date": updatedDate,
       });
       onClose(true); // Close modal and indicate success to refresh list or take other actions
     } catch (error) {

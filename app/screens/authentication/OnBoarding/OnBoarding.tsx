@@ -57,7 +57,8 @@ const OnBoarding = () => {
                     fontSize: 23,
                     color: COLORS.black,
                     fontWeight: '800',
-                    letterSpacing: 1
+                    letterSpacing: 1,
+                
                 }}>
                     with Smart Journal</Text>
             </View>

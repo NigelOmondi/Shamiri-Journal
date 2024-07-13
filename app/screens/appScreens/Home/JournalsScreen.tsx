@@ -35,7 +35,7 @@ const JournalsScreen = () => {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, [filter, sections, title, category, content]);
+  }, [,filter]);
  
   const fetchAllJournals = async () => {
     
@@ -146,10 +146,10 @@ const JournalsScreen = () => {
     setIsSaving(true);
     try {
       let result = await axios.put(`https://shaminstitute.onrender.com/journals/${idToUpdate}`, {
-        title,
-        category,
-        content,
-        date: updatedDate,
+        "title":title,
+        "category":category,
+        "content":content,
+        "date": updatedDate,
       });
       setIsSaving(false);
       console.log("Response from UPDATE HTTPS Request: ", result.data)
@@ -172,11 +172,13 @@ const JournalsScreen = () => {
     console.log("Selected Journal to DELETE", item.title);
     console.log("ID of journal to DELETE", item.id);
 
+   onRefresh();
     try {
       let result = await axios.delete(`https://shaminstitute.onrender.com/journals/${item.id}`);
       console.log("Response from UPDATE HTTPS Request: ", result.data)
     
       ToastAndroid.show("Journal Successfully DELETED.", ToastAndroid.LONG)
+     
      
     } catch (error) {
       console.error(error);

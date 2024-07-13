@@ -76,7 +76,18 @@ const ProfileScreen = () => {
 
   
 
- 
+  const handleSignOut = () => {
+    try {
+      auth.signOut();
+      console.log("User Signed Out");
+      ToastAndroid.show("You are Signed Out!", ToastAndroid.SHORT);
+      
+    } catch (error) {
+      console.log(error);
+      
+      
+    }
+  }
 
   useEffect(() => {
     setIsSaveEnabled(email !== '' && photo !== '' && password !== '');
@@ -151,6 +162,23 @@ const ProfileScreen = () => {
             <TouchableOpacity onPress={TogglePasswordEdit}>
                <MaterialCommunityIcons name="shield-edit-outline" size={24} color={COLORS.white} style={styles.editBtn}/>
             </TouchableOpacity>
+        </View>
+
+        <View>
+        <TouchableOpacity 
+                  onPress={() => handleSignOut()}
+                  activeOpacity={0.8}
+                  style={{
+                  marginTop: 20,
+                  backgroundColor: COLORS.warning,
+                  paddingVertical: 8,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                  width: '50%',
+                  margin: 10
+               }}>
+                  <Text style={{color: COLORS.white, textAlign: 'center',}}>Sign Out</Text>
+               </TouchableOpacity>
         </View>
 
 
